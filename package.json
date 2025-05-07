@@ -4,7 +4,9 @@
   "description": "crud-api",
   "main": "main.ts",
   "scripts": {
-    "start:dev": "ts-node ./src/main.ts"
+    "start:dev": "nodemon src/main.ts",
+    "build": "tsc",
+    "start:prod": "npm run build && node dist/main.js"
   },
   "repository": {
     "type": "git",

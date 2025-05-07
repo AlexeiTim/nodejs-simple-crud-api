@@ -76,7 +76,12 @@ export const createRouter = () => {
 
     if (!url) {
       res.statusCode = 404;
-      res.end("Not found");
+      res.setHeader("COntent-type", "Application/json");
+      res.end(
+        JSON.stringify({
+          message: "URL not exists",
+        })
+      );
       return;
     }
 
@@ -111,7 +116,12 @@ export const createRouter = () => {
     }
 
     res.statusCode = 404;
-    res.end("Not found");
+    res.setHeader("Content-type", "Application/json");
+    res.end(
+      JSON.stringify({
+        message: "Endpoint not exists",
+      })
+    );
   }
 
   return {

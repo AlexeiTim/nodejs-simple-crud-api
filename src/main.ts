@@ -1,10 +1,12 @@
 import http from "http";
+import dotenv from "dotenv";
 import { router } from "./router";
 
+dotenv.config();
 const server = http.createServer(async (req, res) => {
   router.use(req, res);
 });
-
-server.listen(3000, "", () => {
-  console.log("server work");
+const port = process.env.PORT || 3001;
+server.listen(port, () => {
+  console.log("server work on port: " + port);
 });

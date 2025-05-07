@@ -20,7 +20,7 @@ export const userController = {
     try {
       const { id } = params;
       if (!id || !validate(id) || typeof id !== "string") {
-        return jsonResponse(res, 405, { message: "Not valid id" });
+        return jsonResponse(res, 400, { message: "Not valid id" });
       }
       return jsonResponse(res, 200, userService.findOne(id));
     } catch (e) {
@@ -42,7 +42,7 @@ export const userController = {
     try {
       const { id } = params;
       if (typeof id !== "string" || !id || !validate(id)) {
-        return jsonResponse(res, 405, { message: "Not valid id" });
+        return jsonResponse(res, 400, { message: "Not valid id" });
       }
       if (!isValidUpdateUserDto(body)) return;
       return jsonResponse(res, 200, userService.update(id, body));
@@ -55,9 +55,9 @@ export const userController = {
     try {
       const { id } = params;
       if (!id || typeof id !== "string" || !validate(id)) {
-        return jsonResponse(res, 300, "Not valid id");
+        return jsonResponse(res, 400, "Not valid id");
       }
-      return jsonResponse(res, 200, userService.delete(id));
+      return jsonResponse(res, 204, userService.delete(id));
     } catch (e) {
       const error = e as ServerError;
       return jsonResponse(res, error.status, error);
