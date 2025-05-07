@@ -9,14 +9,13 @@ export const parseReqBody = (req: IncomingMessage): Promise<unknown> => {
     });
 
     req.on("end", () => {
-      if (typeof body !== "string") {
-        rej(body);
-      } else {
-        try {
-          res(JSON.parse(body));
-        } catch (e) {
-          rej("Not valid json body");
+      try {
+        if (typeof body !== "string" || !body) {
+          body = "{}";
         }
+        res(JSON.parse(body));
+      } catch (e) {
+        rej("Not valid json body");
       }
     });
 

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { router } from "./router";
 
 dotenv.config();
-const server = http.createServer(async (req, res) => {
+export const server = http.createServer(async (req, res) => {
   router.use(req, res);
 });
 const port = process.env.PORT || 3001;
