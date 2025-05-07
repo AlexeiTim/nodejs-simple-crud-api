@@ -4,7 +4,7 @@ import { router } from "./router";
 export const registerRoutes = () => {
   router.get("/users", userController.findAll);
   router.get("/users/:id", userController.findOne);
-  router.delete("/users", userController.delete);
-  router.put("/users", userController.update);
+  router.delete("/users/:id", userController.delete);
+  router.put("/users/:id", userController.update);
   router.post("/users", userController.create);
 };

@@ -91,7 +91,6 @@ export const createRouter = () => {
       if (match) {
         try {
           const body = await parseReqBody(req);
-          console.log(body);
           await handler(req, res, {
             params,
             body,

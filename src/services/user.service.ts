@@ -19,15 +19,16 @@ export const userService = {
   update(id: string, dto: UpdateUserDto) {
     const user = userRepository.findOne(id);
     if (!user) {
-      throw Error("User not found");
+      throw new ServerError("User not found", 404);
     }
     return userRepository.update(id, dto);
   },
   delete(id: string) {
     const user = userRepository.findOne(id);
     if (!user) {
-      throw Error("User not exists");
+      throw new ServerError("User not exists", 404);
     }
     userRepository.delete(id);
+    return "success";
   },
 };

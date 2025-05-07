@@ -1,9 +1,9 @@
 import { userService } from "../services/user.service";
 import { validate, v4 as uuid } from "uuid";
 import { ReqMeta, ReqParams } from "../types";
-import { isValidCreateUserDto } from "./user.validator";
+import { isValidCreateUserDto, isValidUpdateUserDto } from "./user.validator";
 import { parseReqBody } from "../utils/readRequestBody";
-import { IncomingMessage, ServerResponse } from "http";
+import { IncomingMessage, Server, ServerResponse } from "http";
 import { jsonResponse } from "../utils/jsonResponse";
 import { ServerError } from "../errors";
 
@@ -38,23 +38,29 @@ export const userController = {
       jsonResponse(res, error.status, error);
     }
   },
-  update(req: IncomingMessage, res: ServerResponse) {
-    const id = "123";
-    const dto = null;
-    if (!dto) return;
-
-    const isValidId = validate(id);
-    if (!isValidId) {
-      throw Error("Bad id");
+  update(_: IncomingMessage, res: ServerResponse, { params, body }: ReqMeta) {
+    try {
+      const { id } = params;
+      if (typeof id !== "string" || !id || !validate(id)) {
+        return jsonResponse(res, 405, { message: "Not valid id" });
+      }
+      if (!isValidUpdateUserDto(body)) return;
+      return jsonResponse(res, 200, userService.update(id, body));
+    } catch (e) {
+      const error = e as ServerError;
+      jsonResponse(res, error.status, error);
     }
-    return userService.update(id, dto);
   },
-  delete(req: IncomingMessage, res: ServerResponse) {
-    const id = "123";
-    const isValidId = validate(id);
-    if (!isValidId) {
-      throw Error("Bad id");
+  delete(_: IncomingMessage, res: ServerResponse, { params }: ReqMeta) {
+    try {
+      const { id } = params;
+      if (!id || typeof id !== "string" || !validate(id)) {
+        return jsonResponse(res, 300, "Not valid id");
+      }
+      return jsonResponse(res, 200, userService.delete(id));
+    } catch (e) {
+      const error = e as ServerError;
+      return jsonResponse(res, error.status, error);
     }
-    return userService.delete(id);
   },
 };
