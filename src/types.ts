@@ -1,4 +1,4 @@
-export type UserHobby = string[];
+export type UserHobby = string;
 
 export interface User {
   id: string;
@@ -14,3 +14,9 @@ export interface CreateUserDto {
 }
 
 export interface UpdateUserDto extends CreateUserDto {}
+
+export type ReqParams = Record<string, unknown>;
+export interface ReqMeta {
+  params: ReqParams;
+  body: unknown;
+}
