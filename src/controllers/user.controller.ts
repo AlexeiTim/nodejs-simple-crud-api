@@ -1,9 +1,8 @@
 import { userService } from "../services/user.service";
-import { validate, v4 as uuid } from "uuid";
-import { ReqMeta, ReqParams } from "../types";
+import { validate } from "uuid";
+import { ReqMeta } from "../types";
 import { isValidCreateUserDto, isValidUpdateUserDto } from "./user.validator";
-import { parseReqBody } from "../utils/readRequestBody";
-import { IncomingMessage, Server, ServerResponse } from "http";
+import { IncomingMessage, ServerResponse } from "http";
 import { jsonResponse } from "../utils/jsonResponse";
 import { ServerError } from "../errors";
 
@@ -13,7 +12,7 @@ export const userController = {
       return jsonResponse(res, 200, userService.findAll());
     } catch (e) {
       const error = e as ServerError;
-      jsonResponse(res, error.status, error);
+      return jsonResponse(res, error.status, error);
     }
   },
   findOne(_: IncomingMessage, res: ServerResponse, { params }: ReqMeta) {
@@ -25,17 +24,17 @@ export const userController = {
       return jsonResponse(res, 200, userService.findOne(id));
     } catch (e) {
       const error = e as ServerError;
-      jsonResponse(res, error.status, error);
+      return jsonResponse(res, error.status, error);
     }
   },
   async create(_: IncomingMessage, res: ServerResponse, { body }: ReqMeta) {
     try {
       if (!isValidCreateUserDto(body)) return;
       const newUser = userService.create(body);
-      jsonResponse(res, 201, newUser);
+      return jsonResponse(res, 201, newUser);
     } catch (e) {
       const error = e as ServerError;
-      jsonResponse(res, error.status, error);
+      return jsonResponse(res, error.status, error);
     }
   },
   update(_: IncomingMessage, res: ServerResponse, { params, body }: ReqMeta) {
@@ -48,7 +47,7 @@ export const userController = {
       return jsonResponse(res, 200, userService.update(id, body));
     } catch (e) {
       const error = e as ServerError;
-      jsonResponse(res, error.status, error);
+      return jsonResponse(res, error.status, error);
     }
   },
   delete(_: IncomingMessage, res: ServerResponse, { params }: ReqMeta) {

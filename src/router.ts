@@ -2,6 +2,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { registerRoutes } from "./routes";
 import { ReqMeta, ReqParams } from "./types";
 import { parseReqBody } from "./utils/readRequestBody";
+import { DATA_BASE } from "./db";
 
 enum METHODS {
   POST = "POST",
@@ -71,7 +72,15 @@ export const createRouter = () => {
     registeredMethods[METHODS.DELETE][url] = cb;
   }
 
-  async function use(req: IncomingMessage, res: ServerResponse) {
+  async function use(
+    req: IncomingMessage,
+    res: ServerResponse,
+    optional?: { dbState: typeof DATA_BASE }
+  ) {
+    if (optional?.dbState) {
+      DATA_BASE.updateDB(optional.dbState);
+    }
+
     const { method, url } = req;
 
     if (!url) {
@@ -100,6 +109,11 @@ export const createRouter = () => {
             params,
             body,
           });
+          process.send &&
+            process.send({
+              type: "DB_CHANGED",
+              updatedDB: DATA_BASE,
+            });
           return;
         } catch (e) {
           res.statusCode = 500;
