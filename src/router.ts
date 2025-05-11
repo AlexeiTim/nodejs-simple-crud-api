@@ -109,11 +109,6 @@ export const createRouter = () => {
             params,
             body,
           });
-          process.send &&
-            process.send({
-              type: "DB_CHANGED",
-              updatedDB: DATA_BASE,
-            });
           return;
         } catch (e) {
           res.statusCode = 500;

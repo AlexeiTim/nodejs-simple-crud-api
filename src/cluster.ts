@@ -26,12 +26,7 @@ interface ResponseData {
   updatedDB: typeof DATA_BASE;
 }
 
-interface DbChanged {
-  type: "DB_CHANGED";
-  updatedDB: typeof DATA_BASE;
-}
-
-type WorkerMessage = RequestData | DbChanged;
+type WorkerMessage = RequestData;
 
 let workerIndexForCall = 0;
 if (cluster.isPrimary) {
@@ -84,15 +79,6 @@ if (cluster.isPrimary) {
         res.end(responseData.body);
       });
     }
-  });
-
-  const workers = Object.values(cluster.workers || {});
-  workers.forEach((worker) => {
-    worker?.on("message", (data) => {
-      if (data.type === "DB_CHANGED") {
-        DATA_BASE.updateDB(data.updateDB);
-      }
-    });
   });
 
   loadBalancer.listen(PORT, () => {
