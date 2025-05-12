@@ -106,34 +106,32 @@ if (cluster.isPrimary) {
   });
 
   process.on("message", async (message: WorkerMessage) => {
-    if ("method" in message) {
-      const socket = new Socket();
-      const req = new IncomingMessage(socket);
-      req.method = message.method;
-      req.url = message.url;
-      req.headers = message.headers;
+    const socket = new Socket();
+    const req = new IncomingMessage(socket);
+    req.method = message.method;
+    req.url = message.url;
+    req.headers = message.headers;
 
-      if (message.body) {
-        req.push(Buffer.from(message.body));
-        req.push(null);
-      }
-
-      const res = new ServerResponse(req);
-
-      const originalEnd = res.end;
-      res.end = function (chunk?: any, encoding?: any, callback?: any) {
-        if (process.send) {
-          process.send({
-            statusCode: res.statusCode,
-            headers: res.getHeaders(),
-            body: chunk ? chunk.toString() : "",
-            updatedDB: DATA_BASE,
-          });
-        }
-        return originalEnd.call(this, chunk, encoding, callback);
-      };
-
-      await router.use(req, res, { dbState: message.actualDB });
+    if (message.body) {
+      req.push(Buffer.from(message.body));
+      req.push(null);
     }
+
+    const res = new ServerResponse(req);
+
+    const originalEnd = res.end;
+    res.end = function (chunk?: any, encoding?: any, callback?: any) {
+      if (process.send) {
+        process.send({
+          statusCode: res.statusCode,
+          headers: res.getHeaders(),
+          body: chunk ? chunk.toString() : "",
+          updatedDB: DATA_BASE,
+        });
+      }
+      return originalEnd.call(this, chunk, encoding, callback);
+    };
+
+    await router.use(req, res, { dbState: message.actualDB });
   });
 }
